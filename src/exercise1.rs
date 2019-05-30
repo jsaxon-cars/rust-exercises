@@ -1,9 +1,18 @@
 pub fn find_largest_element(elems: &Vec<i64>) -> Option<i64> {
+    println!("Vector: {:?}", elems);
 
-    // code goes here
+    let mut largest: Option<i64> = None;
 
+    if elems.len() > 0 {
+        for val in elems.iter() {
+            if largest == None || *val > largest.unwrap() {
+                largest = Some(*val);
+            }
+        }
+    }
+
+    return largest;
 }
-
 
 #[cfg(test)]
 mod test {
