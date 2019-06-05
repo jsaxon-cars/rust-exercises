@@ -13,7 +13,6 @@ pub fn find_largest_element(elems: &Vec<i64>) -> Option<i64> {
     largest
 }
 
-
 #[cfg(test)]
 mod test {
     use super::*;
