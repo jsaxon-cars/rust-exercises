@@ -5,3 +5,4 @@
 fn main() {
     println!("{}", "Hello, world! You can run tests with 'cargo test --all'");
 }
+
