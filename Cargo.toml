@@ -10,6 +10,7 @@ name = "exercises"
 [workspace]
 members = [
   "problems/problem1",
+  "problems/chapter2",
   "problems/problem2",
 ]
 
