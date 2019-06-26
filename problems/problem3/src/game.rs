@@ -11,7 +11,7 @@ pub struct Game {
 
     player_wins: u32,
     player_losses: u32,
-    player_ties: u32,
+    ties: u32,
 
 }
 
@@ -23,7 +23,7 @@ impl Game {
         Game {
             player_wins: 0,
             player_losses: 0,
-            player_ties: 0,
+            ties: 0,
         }
     }
 
@@ -51,10 +51,11 @@ impl Game {
                 println!("I can't believe I lost!");
             },
             Ordering::Equal   => {
-                self.player_ties += 1;
+                self.ties += 1;
                 println!("No winner. Try again.")
             }
         }
-
-    }
+    }    
 }
+
+

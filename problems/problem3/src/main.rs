@@ -28,7 +28,7 @@ fn main() {
 
         // plays one round of the game and prints results
         game.play(choice);
-        println!("Results: {:?}", game);
+        println!("Results:\n{:?}", game);
         println!("");
 
     }
