@@ -1,32 +1,28 @@
+use chapter3::convert;
 use std::io;
-use problem2::sum_one_to_n;
 
 fn main() {
 
     loop {
-        println!("Give me a number, any POSITIVE INTEGER!");
+        println!("Input a temperature with an F or C suffix:\n");
 
-        // This variable can be used to store the string input from the user
-        // Strings are weird in Rust.
-        // let mut number = String::new();
+        let mut temperature = String::new();
 
-        // // HOW DO YOU MAKE IT BREAK.
-        // io::stdin().read_line(mut number).expect("Huh?");
-        let number = my_read_line();
-        match number.trim().parse() {
-            Ok(num) => {
-                println!("The sum of 1 to {} is: {}", num, sum_one_to_n(num));
+        io::stdin().read_line(&mut temperature)
+            .expect("Failed to read line");
+
+        let temperature: f64 = match temperature.trim().parse() {
+            Ok(temperature) => {
+                println!("\nTook {} characters.", temperature);
+                temperature
             },
-            Err(_) => continue,
-        }
+            Err(_) => {
+                println!("Nope");
+                continue
+            }
+        };
+        println!("Convering {} to {}", temperature, convert(&temperature));
+        
     }
 }
 
-fn my_read_line() -> String {
-    let mut line = String::new();
-    match io::stdin().read_line(&mut line) {
-        Ok(count) => println!("Took {} characters.", count - 1),
-        Err(_) => println!("Never gonna happen."),
-    }
-    line.trim().to_string()
-}
