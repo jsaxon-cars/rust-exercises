@@ -1,9 +1,9 @@
 use rand::distributions::Distribution;
 use rand::distributions::Standard;
-use std::cmp::Ordering;
 use simple_error::SimpleError;
-use std::str::FromStr;
+use std::cmp::Ordering;
 use std::fmt;
+use std::str::FromStr;
 
 /// The base type for representing Rock, Paper, and Scissors, which are all the
 /// possible choices in our game.
@@ -21,13 +21,11 @@ pub enum GameElement {
 ///
 /// ```
 /// use problem3::game_element::GameElement::*;
-/// let comparison = Rock < Paper;
+/// let comparison = Rock > Paper;
 /// assert_eq!(comparison, true);
 ///```
 impl Ord for GameElement {
-
     fn cmp(&self, other: &Self) -> Ordering {
-
         use GameElement::*;
         use Ordering::*;
 
@@ -38,7 +36,7 @@ impl Ord for GameElement {
         match (self, other) {
             (Paper, Rock) | (Rock, Scissors) | (Scissors, Paper) => Greater,
             (Rock, Paper) | (Scissors, Rock) | (Paper, Scissors) => Less,
-            _ => Equal
+            _ => Equal,
         }
     }
 }
@@ -54,9 +52,7 @@ impl PartialOrd for GameElement {
 
 /// Allows callers to randomly generate game choices.
 impl Distribution<GameElement> for Standard {
-
     fn sample<R: rand::Rng + ?Sized>(&self, rng: &mut R) -> GameElement {
-
         // randomly chooses 1, 2, or 3
         let n: u32 = rng.gen_range(1, 4);
 
@@ -65,14 +61,11 @@ impl Distribution<GameElement> for Standard {
             2 => GameElement::Paper,
             _ => GameElement::Scissors,
         }
-
     }
 }
 
 /// Console-friendly string representation of each element.
 impl fmt::Display for GameElement {
-
-    /// FIX ME!
     /// This displays a user friendly string representation of all three
     /// `GameElement` variants.
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -89,7 +82,7 @@ impl FromStr for GameElement {
     /// or returns an error.
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let choice = s.trim();
-        if  choice == "r" {
+        if choice == "r" {
             Ok(GameElement::Rock)
         } else if choice == "s" {
             Ok(GameElement::Scissors)
@@ -100,7 +93,6 @@ impl FromStr for GameElement {
         }
     }
 }
-
 
 #[cfg(test)]
 mod test {
@@ -115,7 +107,6 @@ mod test {
         assert!(Paper > Rock && Scissors > Paper && Rock > Scissors);
         assert!(Paper == Paper && Scissors == Scissors && Rock == Rock);
     }
-
 
     // add additional tests to make sure we can parse game elements from
     // strings and also display them

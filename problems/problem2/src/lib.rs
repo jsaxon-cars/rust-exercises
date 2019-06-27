@@ -1,8 +1,6 @@
-
 pub fn sum_one_to_n(n: u32) -> u32 {
     (0..=n).sum()
 }
-
 
 #[cfg(test)]
 mod test {

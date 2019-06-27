@@ -1,8 +1,7 @@
-use std::io;
 use problem2::sum_one_to_n;
+use std::io;
 
 fn main() {
-
     loop {
         println!("Give me a number, any POSITIVE INTEGER!");
 
@@ -16,7 +15,7 @@ fn main() {
         match number.trim().parse() {
             Ok(num) => {
                 println!("The sum of 1 to {} is: {}", num, sum_one_to_n(num));
-            },
+            }
             Err(_) => continue,
         }
     }

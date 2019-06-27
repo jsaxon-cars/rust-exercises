@@ -4,20 +4,15 @@ use std::cmp::Ordering;
 
 use crate::game_element::*;
 
-
 /// A structure that tracks wins/losses/ties for someone playing our game.
 #[derive(Debug)]
 pub struct Game {
-
     player_wins: u32,
     player_losses: u32,
     ties: u32,
-
 }
 
-
 impl Game {
-
     /// Constructs a new `Game` instance.
     pub fn new() -> Game {
         Game {
@@ -42,20 +37,18 @@ impl Game {
         print!("I choose {}. ", computer_choice);
 
         match player.cmp(&computer_choice) {
-            Ordering::Less    => {
+            Ordering::Less => {
                 self.player_losses += 1;
                 println!("I win!");
-            },
+            }
             Ordering::Greater => {
                 self.player_wins += 1;
                 println!("I can't believe I lost!");
-            },
-            Ordering::Equal   => {
+            }
+            Ordering::Equal => {
                 self.ties += 1;
                 println!("No winner. Try again.")
             }
         }
-    }    
+    }
 }
-
-

@@ -3,6 +3,8 @@
 // any of the libraries you create under `problems/`
 
 fn main() {
-    println!("{}", "Hello, world! You can run tests with 'cargo test --all'");
+    println!(
+        "{}",
+        "Hello, world! You can run tests with 'cargo test --all'"
+    );
 }
-
