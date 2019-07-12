@@ -1,4 +1,3 @@
-use std::cmp;
 use std::vec::Vec;
 use std::str;
 
@@ -15,6 +14,14 @@ use std::str;
 pub fn make_flower_box(elems: Vec<&str>) -> String {
 
     let mut flower_box = String::new();
+    // get max length of vector add four to it.
+    let max = get_max_line_length(&elems);
+    let border = format_border("*", max + 4);
+    flower_box.push_str(&border);
+    for word in elems.iter() {
+        flower_box.push_str(&format_line(word, max));
+    }; 
+    flower_box.push_str(&border);
 
     flower_box
 
@@ -30,7 +37,12 @@ pub fn make_flower_box(elems: Vec<&str>) -> String {
 /// assert_eq!(actual, expected)
 /// ```
 pub fn format_line(s: &str, max_length: usize) -> String {
-    String::from("* *")
+    match max_length >= s.len() {
+        true => format!("* {}{} *\n", s, " ".repeat(max_length - &s.len())),
+        _ => format!("* {} *\n", &s[..max_length]),
+    }
+    
+    
 }
 
 /// Creates a border that can be used at the top and bottom
@@ -44,7 +56,10 @@ pub fn format_line(s: &str, max_length: usize) -> String {
 /// assert_eq!(actual, expected)
 /// ```
 pub fn format_border(s: &str, length: usize) -> String {
-    String::from("******\n")
+    match s.len() {
+        0 => String::from("\n"),
+        _ => s[0..1].repeat(length) + "\n",
+    }
 }
 
 /// Gets the longest line length from `elems`.
@@ -56,7 +71,13 @@ pub fn format_border(s: &str, length: usize) -> String {
 /// assert_eq!(get_max_line_length(&elems), 8);
 /// ```
 pub fn get_max_line_length(elems: &Vec<&str>) -> usize {
-    5
+    match &elems[..] {
+        [] => 0,
+        [first] => first.len(),
+        _ => 
+        elems[0].len()
+        .max(get_max_line_length(&elems[1..].to_vec())),
+    }
 }
 
 #[cfg(test)]
@@ -64,11 +85,43 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_empty_box() {
-        let expected = String::from("");
-        let empty_vec: Vec<&str> = Vec::new();
+    fn test_format_line() {
+        assert_eq!("*  *\n", format_line(&"", 0));
+        assert_eq!("*  *\n", format_line(&"hello", 0));
+        assert_eq!("*   *\n", format_line(&"", 1));
+        assert_eq!("*   *\n", format_line(&" ", 1));
+        assert_eq!("*    *\n", format_line(&" ", 2));
+        assert_eq!("* he *\n", format_line(&"hello", 2));
+        assert_eq!("* hello *\n", format_line(&"hello", 5));
+        assert_eq!("* hello  *\n", format_line(&"hello", 6));
+        assert_eq!("* hello   *\n", format_line(&"hello", 7));
+    }
 
-        assert_eq!(expected, make_flower_box(empty_vec));
+    #[test]
+    fn test_format_border() {
+        assert_eq!("\n", format_border(&"", 0));
+        assert_eq!("\n", format_border(&"*", 0));
+        assert_eq!("*\n", format_border(&"*", 1));
+        assert_eq!("*\n", format_border(&"**", 1));
+        assert_eq!("**\n", format_border(&"*", 2));
+        assert_eq!("xxxx\n", format_border(&"x", 4));
+    }
+
+    #[test]
+    fn test_max_line_length() {
+        assert_eq!(0, get_max_line_length(&vec![]));
+        assert_eq!(0, get_max_line_length(&vec![""]));
+        assert_eq!(0, get_max_line_length(&vec!["",""]));
+        assert_eq!(3, get_max_line_length(&vec!["foo"]));
+        assert_eq!(4, get_max_line_length(&vec!["foo", "foob"]));
+        assert_eq!(6, get_max_line_length(&vec!["foobey", "foob"]));
+        assert_eq!(4, get_max_line_length(&vec!["", "foob"]));
+        assert_eq!(5, get_max_line_length(&vec!["", "foob", "mooey"]));
+    }
+
+    #[test]
+    fn test_empty_box() {
+        assert_eq!(String::from("****\n****\n"), make_flower_box(vec![]));
     }
 
     #[test]
@@ -89,5 +142,12 @@ mod test {
         assert_eq!(expected, make_flower_box(test_vec));
     }
 
-
 }
+
+// ['yes', 'no', 'maybe so']
+// 
+// ************
+// * yes      *
+// * no       *
+// * maybe so *
+// ************
