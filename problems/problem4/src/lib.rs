@@ -126,16 +126,16 @@ mod test {
 
     #[test]
     fn test_box() {
-        let expected = r####"*********
-* one   *
-* two   *
-* three *
-* four  *
-* five  *
-* six   *
-* seven *
-*********
-"####.to_string();
+        let expected = String::from("\
+        *********\n\
+        * one   *\n\
+        * two   *\n\
+        * three *\n\
+        * four  *\n\
+        * five  *\n\
+        * six   *\n\
+        * seven *\n\
+        *********\n");
 
         let test_vec = vec!["one", "two", "three", "four", "five", "six", "seven"];
 
