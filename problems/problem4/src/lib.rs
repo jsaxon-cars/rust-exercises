@@ -1,5 +1,5 @@
-use std::vec::Vec;
 use std::str;
+use std::vec::Vec;
 
 /// Takes a vector of string slices and formats them
 /// line by line in a flower box, e.g.
@@ -12,7 +12,6 @@ use std::str;
 /// *********
 ///
 pub fn make_flower_box(elems: Vec<&str>) -> String {
-
     let mut flower_box = String::new();
     // get max length of vector add four to it.
     let max = get_max_line_length(&elems);
@@ -20,11 +19,10 @@ pub fn make_flower_box(elems: Vec<&str>) -> String {
     flower_box.push_str(&border);
     for word in elems.iter() {
         flower_box.push_str(&format_line(word, max));
-    }; 
+    }
     flower_box.push_str(&border);
 
     flower_box
-
 }
 
 /// Creates a string with a border and space padding.
@@ -41,8 +39,6 @@ pub fn format_line(s: &str, max_length: usize) -> String {
         true => format!("* {}{} *\n", s, " ".repeat(max_length - &s.len())),
         _ => format!("* {} *\n", &s[..max_length]),
     }
-    
-    
 }
 
 /// Creates a border that can be used at the top and bottom
@@ -74,9 +70,9 @@ pub fn get_max_line_length(elems: &Vec<&str>) -> usize {
     match &elems[..] {
         [] => 0,
         [first] => first.len(),
-        _ => 
-        elems[0].len()
-        .max(get_max_line_length(&elems[1..].to_vec())),
+        _ => elems[0]
+            .len()
+            .max(get_max_line_length(&elems[1..].to_vec())),
     }
 }
 
@@ -111,7 +107,7 @@ mod test {
     fn test_max_line_length() {
         assert_eq!(0, get_max_line_length(&vec![]));
         assert_eq!(0, get_max_line_length(&vec![""]));
-        assert_eq!(0, get_max_line_length(&vec!["",""]));
+        assert_eq!(0, get_max_line_length(&vec!["", ""]));
         assert_eq!(3, get_max_line_length(&vec!["foo"]));
         assert_eq!(4, get_max_line_length(&vec!["foo", "foob"]));
         assert_eq!(6, get_max_line_length(&vec!["foobey", "foob"]));
@@ -126,16 +122,18 @@ mod test {
 
     #[test]
     fn test_box() {
-        let expected = String::from("\
-        *********\n\
-        * one   *\n\
-        * two   *\n\
-        * three *\n\
-        * four  *\n\
-        * five  *\n\
-        * six   *\n\
-        * seven *\n\
-        *********\n");
+        let expected = String::from(
+            "\
+             *********\n\
+             * one   *\n\
+             * two   *\n\
+             * three *\n\
+             * four  *\n\
+             * five  *\n\
+             * six   *\n\
+             * seven *\n\
+             *********\n",
+        );
 
         let test_vec = vec!["one", "two", "three", "four", "five", "six", "seven"];
 
@@ -145,7 +143,7 @@ mod test {
 }
 
 // ['yes', 'no', 'maybe so']
-// 
+//
 // ************
 // * yes      *
 // * no       *

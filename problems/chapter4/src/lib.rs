@@ -1,19 +1,21 @@
-//
-//
-//
+///
+///
+///
 
-pub fn prefix(base: &str, before: &str) -> &str {
-    before + base
+pub fn my_prefix(base: String, before: String) -> String {
+    format!("{}{}", before, base)
 }
 
-pub fn suffix(base: &str, after: &str) -> &str {
-    hbase + after
+pub fn my_suffix(base: String, after: String) -> String {
+    format!("{}{}", base, after)
 }
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
+    fn test_prefix() {
+        assert_eq!("thisguy", my_prefix("guy".to_string(), "this".to_string()));
     }
 }
