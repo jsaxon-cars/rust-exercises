@@ -30,30 +30,49 @@ impl FromStr for MaybeWord {
 // Console-based rock/paper/scissors game. Make sure to fix the broken
 // code in `game_element.rs`.
 fn main() {
-    println!("Let's make flower boxes!");
+    println!("Let's Make Flower Boxes!");
 
-    let mut word_list: Vec<&str> = vec![];
+    let mut flowers: Vec<String> = vec![];
+    let mut raw_input = String::new();
 
     loop {
-        println!("Input a word: ");
+        println!("Input a flower.  Hit Return to build Flower Box: ");
 
-        let mut word = String::new();
+        io::stdin().read_line(&mut raw_input).expect("Failed to read line");
 
-        io::stdin().read_line(&mut word).expect("Failed to read line");
-
-        match word.trim().parse() {
-            Ok(MaybeWord::Blank) =>  {
-                make_flower_box(word_list);
-            },
-            Ok(MaybeWord::Word(new_word)) => {
-                // Add word to word_list
-                println!("WORD IS: {}", &new_word);
-                word_list.push(&new_word);
-            },
+        match raw_input.trim().parse() {
             Err(_) => {
                 println!("Not possible!");
                 continue;
+            },
+
+            Ok(maybe_flower) => {
+                match maybe_flower {
+                    MaybeWord::Word(flower) => {
+                        println!("Added flower: {}\n", &flower);
+                        flowers.push(flower);
+                        raw_input = String::new();
+                    },
+                    MaybeWord::Blank => {
+                        let mut new_flowers: Vec<&str> = vec![];
+                        for flower in &flowers {
+                            new_flowers.push(&flower)
+                        }
+                        println!("
+We got all the flowers!
+
+{:?}
+
+Let's plant them!
+
+{}
+                        ", &flowers, make_flower_box(new_flowers));
+
+                    }
+                }
+
             }
+            
         };
 
     }
