@@ -5,3 +5,4 @@ authors = ["Eric Rasmussen <ericrasmussen@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+simple-error = "0.2.0"
