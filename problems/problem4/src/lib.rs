@@ -5,23 +5,29 @@ use std::vec::Vec;
 /// line by line in a flower box, e.g.
 /// vec!["one", "two", "three"] becomes:
 ///
+/// 
+/// ``` let result = r#"
 /// *********
 /// * one   *
 /// * two   *
 /// * three *
-/// *********
+/// *********"#;```
 ///
 pub fn make_flower_box(elems: Vec<&str>) -> String {
-    let mut flower_box = String::new();
-    // get max length of vector add four to it.
+
     let max = get_max_line_length(&elems);
     let border = format_border("*", max + 4);
-    flower_box.push_str(&border);
-    for word in elems.iter() {
-        flower_box.push_str(&format_line(word, max));
-    }
-    flower_box.push_str(&border);
-
+    let mut flower_box = String::new();
+    {
+        // Border
+        flower_box.push_str(&border);
+        // Lines
+        for elem in elems.iter() {
+            flower_box.push_str(&format_line(elem, max));
+        }; 
+        // Border
+        flower_box.push_str(&border);
+    };
     flower_box
 }
 
@@ -139,13 +145,5 @@ mod test {
 
         assert_eq!(expected, make_flower_box(test_vec));
     }
-
 }
 
-// ['yes', 'no', 'maybe so']
-//
-// ************
-// * yes      *
-// * no       *
-// * maybe so *
-// ************
