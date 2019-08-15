@@ -1,6 +1,5 @@
-use rand;
 use std::fmt;
-use rand::Rng;
+use rand::seq::SliceRandom;
 
 pub struct Deck {
     cards: Vec<Card>
@@ -42,11 +41,12 @@ pub enum Suit {
 
 impl fmt::Display for Suit {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // *** IMPLEMENT THIS METHOD ***
-        // It should output one of these unicode strings
-        // as appropriate for the suit: "♠" "♥" "♦" "♣"
-        // see: https://doc.rust-lang.org/std/fmt/trait.Display.html
-        write!(f, "{}", "♠")
+        match self {
+            Suit::Spades => write!(f, "{}", "♠"),
+            Suit::Hearts => write!(f, "{}", "♥"),
+            Suit::Diamonds => write!(f, "{}", "♦"),
+            Suit::Clubs => write!(f, "{}", "♣"),
+        }
     }
 }
 
@@ -73,11 +73,15 @@ impl Rank {
 
 impl fmt::Display for Rank {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // *** IMPLEMENT THIS METHOD ***
-        // It should output one of these string values, as appropriate
-        // for the given rank:  2 3 4 5 6 7 8 9 10 J Q K A
-        // see: https://doc.rust-lang.org/std/fmt/trait.Display.html
-        write!(f, "{}", "A")
+        use Rank::*;
+        let rank: String = match self {
+            Jack => String::from("J"),
+            Queen => String::from("Q"),
+            King => String::from("K"),
+            Ace => String::from("A"),
+            _ => self.value().to_string(),
+        };
+        write!(f, "{}", rank)
     }
 }
 
@@ -97,6 +101,7 @@ impl fmt::Display for Card {
 }
 
 impl Deck {
+
     pub fn new() -> Self {
         let mut deck = Self {
             cards: Vec::new()
@@ -115,14 +120,23 @@ impl Deck {
     }
 
     fn load(&mut self) {
-        // *** IMPLEMENT THIS METHOD ***
-        // Given an empty vector in self.cards, populate it with all 52 of the
-        // available unique cards.
+        let suits = vec!(Suit::Spades, Suit::Hearts, Suit::Diamonds, Suit::Clubs);
+        let ranks = vec!(
+            Rank::Two, Rank::Three, Rank::Four, Rank::Five, Rank::Six, Rank::Seven, 
+            Rank::Eight, Rank::Nine, Rank::Ten, Rank::Jack, Rank::Queen, Rank::King, 
+            Rank::Ace, );
+        for suit in &suits {
+            for rank in &ranks {
+                let card = Card {rank: rank.clone(), suit: suit.clone()};
+                self.cards.push(card);
+            }
+        }
+
     }
 
     pub fn shuffle(&mut self) {
-        // *** IMPLEMENT THIS METHOD ***
-        // Fully randomize the order of the cards in the self.cards vector.
+        let mut rng = rand::thread_rng();
+        self.cards.shuffle(&mut rng);
     }
 }
 
@@ -158,12 +172,26 @@ mod test {
 
     #[test]
     fn test_load_deck() {
-        use Rank::*;
-        use Suit::*;
         let mut deck = Deck {
             cards: Vec::new()
         };
         deck.load();
+        assert_cards_exist(&deck)
+    }
+
+    #[test]
+    fn test_shuffle_deck() {
+        let mut deck = Deck {
+            cards: Vec::new()
+        };
+        deck.load();
+        deck.shuffle();
+        assert_cards_exist(&deck)
+    }
+
+    fn assert_cards_exist(deck: &Deck) {
+        use Rank::*;
+        use Suit::*;
         assert_eq!(deck.cards.len(), 52);
         assert!(exists(&deck, Ace, Spades));
         assert!(exists(&deck, Two, Spades));
@@ -216,7 +244,7 @@ mod test {
         assert!(exists(&deck, Ten, Clubs));
         assert!(exists(&deck, Jack, Clubs));
         assert!(exists(&deck, Queen, Clubs));
-        assert!(exists(&deck, King, Clubs));
+        assert!(exists(&deck, King, Clubs));        
     }
 
     fn exists(deck: &Deck, rank: Rank, suit: Suit) -> bool {

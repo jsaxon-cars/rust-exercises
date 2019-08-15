@@ -35,6 +35,13 @@ fn main() {
     let mut flowers: Vec<String> = vec![];
     let mut raw_input = String::new();
 
+    let mut foo:bool = true;
+
+    match foo {
+        true => println!("true"),
+        false => println!("false")
+    }
+
     loop {
         println!("Input a flower.  Hit Return to build Flower Box: ");
 

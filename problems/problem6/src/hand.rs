@@ -33,13 +33,19 @@ impl Hand {
         self.is_busted() || self.is_blackjack()
     }
 
-    /// Return the numeric value of the hand.
     pub fn get_value(&self) -> u8 {
-        // *** IMPLEMENT THIS METHOD ***
-        // Note that you can leverage the underlying rank.value() method of
-        // the cards, but you'll need some special handling to decide when
-        // to count an ace as 1 vs. 11
-        0
+        let mut value = self.cards.iter()
+            .map(|card| card.rank.value())
+            .sum();
+        let ace_count = self.cards.iter()
+            .filter(|card| card.rank == Rank::Ace)
+            .count();
+        for _ in 0..ace_count {
+            if value > 21 {
+                value = value - 10;
+            } 
+        }
+        value
     }
 }
 
