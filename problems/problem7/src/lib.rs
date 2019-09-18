@@ -4,50 +4,52 @@ type Set = Box<dyn Fn(i64) -> bool>;
 
 // create a new set from one `i64`
 pub fn singleton(x: i64) -> Set {
-    Box::new(move |y| y == 1)
+    Box::new(move |y| y == x)
 }
 
 // tests for membership in the given set
 pub fn contains(s: &Set, x: i64) -> bool {
-    x == 1
+    s(x)
 }
 
 // combines two sets
 pub fn union(s1: Set, s2: Set) -> Set {
-    Box::new(move |x| x == 1)
+    Box::new(move |x| s1(x) || s2(x))
 }
 
 // creates a new set containing only elements from `s1` and `s2`
 pub fn intersect(s1: Set, s2: Set) -> Set {
-    Box::new(move |x| x == 1)
+    Box::new(move |x| s1(x) && s2(x))
 }
 
 // creates a new set containing elements from `s1` that aren't part of `s2`
 pub fn diff(s1: Set, s2: Set) -> Set {
-    Box::new(move |x| x == 1)
+    Box::new(move |x| s1(x) && !s2(x))
 }
 
 // filters out any elements in the set that don't match the predicate `p`
 pub fn filter(s: Set, p: fn(i64) -> bool) -> Set {
-    Box::new(move |x| x == 1)
+    Box::new(move |x| p(x) && s(x))
 }
 
-// checks if predicate `p` holds true for elements in the set. you can
+// checks if predicate `p` holds true for ALL elements in the set. you can
 // limit the search space to the range `(-1000..1000)`
 pub fn forall(s: Set, p: Box<dyn Fn(i64) -> bool>) -> bool {
-    true
+    (-1000..1000)
+        .filter(|x| s(*x))
+        .all(|y| p(y))
 }
 
-// tests if any element of the set exists such that predicate `p` holds
+// tests if ANY element of the set exists such that predicate `p` holds
 // true. this should be implemented to use `forall`
 pub fn exists(s: Set, p: Box<dyn Fn(i64) -> bool>) -> bool {
-    true
+    !forall(s, Box::new(move |v| !p(v)))
 }
 
-// we want to implement `map` using `exists`, but it rqeuires nested closures, which
+// we want to implement `map` using `exists`, but it requires nested closures, which
 // are difficult in rust. you can also implement it directly using `(-1000..1000)`
 pub fn map(s: Set, f: fn(i64) -> i64) -> Set {
-    Box::new(move |x| x == 1)
+    Box::new(move |x| exists(s, Box::new(move |y| x == f(y))))
 }
 
 #[cfg(test)]
@@ -58,6 +60,7 @@ mod test {
     fn test_singleton() {
         let five = singleton(5);
         assert!(five(5));
+        assert!( ! five(6));
     }
 
     #[test]
