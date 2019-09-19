@@ -35,9 +35,7 @@ pub fn filter(s: Set, p: fn(i64) -> bool) -> Set {
 // checks if predicate `p` holds true for ALL elements in the set. you can
 // limit the search space to the range `(-1000..1000)`
 pub fn forall(s: Set, p: Box<dyn Fn(i64) -> bool>) -> bool {
-    (-1000..1000)
-        .filter(|x| s(*x))
-        .all(|y| p(y))
+    (-1000..1000).filter(|x| s(*x)).all(|y| p(y))
 }
 
 // tests if ANY element of the set exists such that predicate `p` holds
@@ -49,7 +47,7 @@ pub fn exists(s: Set, p: Box<dyn Fn(i64) -> bool>) -> bool {
 // we want to implement `map` using `exists`, but it requires nested closures, which
 // are difficult in rust. you can also implement it directly using `(-1000..1000)`
 pub fn map(s: Set, f: fn(i64) -> i64) -> Set {
-    Box::new(move |x| exists(s, Box::new(move |y| x == f(y))))
+    Box::new(move |x| (-1000..1000).filter(|y| s(*y)).any(|z| x == f(z)))
 }
 
 #[cfg(test)]
@@ -60,14 +58,14 @@ mod test {
     fn test_singleton() {
         let five = singleton(5);
         assert!(five(5));
-        assert!( ! five(6));
+        assert!(!five(6));
     }
 
     #[test]
     fn test_contains() {
         let positive: Set = Box::new(|x| x >= 0);
         assert!(contains(&positive, 5));
-        assert!( ! contains(&positive, -5));
+        assert!(!contains(&positive, -5));
     }
 
     #[test]
@@ -77,7 +75,6 @@ mod test {
         let combined = union(positive, negative);
         assert!(contains(&combined, 5));
         assert!(contains(&combined, -5));
-
     }
 
     #[test]
@@ -86,8 +83,7 @@ mod test {
         let kind_of_big: Set = Box::new(|x| x > 1_000_000);
         let combined = intersect(positive, kind_of_big);
         assert!(contains(&combined, 1_000_001));
-        assert!( ! contains(&combined, 10));
-
+        assert!(!contains(&combined, 10));
     }
 
     #[test]
@@ -95,9 +91,8 @@ mod test {
         let positive: Set = Box::new(|x| x >= 0);
         let kind_of_big: Set = Box::new(|x| x > 1_000_000);
         let positive_and_not_so_big = diff(positive, kind_of_big);
-        assert!( ! contains(&positive_and_not_so_big, 1_000_001));
+        assert!(!contains(&positive_and_not_so_big, 1_000_001));
         assert!(contains(&positive_and_not_so_big, 10));
-
     }
 
     #[test]
@@ -108,8 +103,7 @@ mod test {
         }
         let positive_and_even = filter(positive, is_even);
         assert!(contains(&positive_and_even, 80));
-        assert!( ! contains(&positive_and_even, 81));
-
+        assert!(!contains(&positive_and_even, 81));
     }
 
     #[test]
@@ -119,12 +113,11 @@ mod test {
         assert!(forall(positive, is_positive));
     }
 
-
     #[test]
     fn test_not_forall() {
         let positive: Set = Box::new(|x| x >= 0);
         let equals_ten = Box::new(move |x| x == 10);
-        assert!( ! forall(positive, equals_ten) );
+        assert!(!forall(positive, equals_ten));
     }
 
     #[test]
@@ -135,7 +128,7 @@ mod test {
 
         assert!(exists(positive, bigger_than_10.clone()));
 
-        assert!( ! exists(negative, bigger_than_10.clone()) );
+        assert!(!exists(negative, bigger_than_10.clone()));
     }
 
     #[test]
@@ -147,7 +140,6 @@ mod test {
         assert!(contains(&one_hundred_to_one_thousand, 100));
         assert!(contains(&one_hundred_to_one_thousand, 200));
         assert!(contains(&one_hundred_to_one_thousand, 1000));
-        assert!( ! contains(&one_hundred_to_one_thousand, 10));
-
+        assert!(!contains(&one_hundred_to_one_thousand, 10));
     }
 }
