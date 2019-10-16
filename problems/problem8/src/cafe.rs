@@ -49,10 +49,11 @@ impl Cafe {
 
         println!("{} visitors come in...", visitors.len());
 
-        let (tx, rx): (mpsc::Sender<String>, mpsc::Receiver<String>) = mpsc::channel();
-
+        let (tx, rx) = mpsc::channel();
         while let Some(next_up) = visitors.pop() {
             println!("Next up: Visitor {}.", next_up.name());
+            // So, we're waiting a second here.  Not the best, we could 
+            // do it with the message itself perhaps?  Next attempt.
             while !self.open_computers() {
                 thread::sleep(Duration::from_secs(1));
                 if let Result::Ok(msg) = rx.try_recv() {
@@ -62,14 +63,13 @@ impl Cafe {
             println!("A computer is ready!");
             let tx = mpsc::Sender::clone(&tx);
             self.allocate_computer(next_up, tx);
-        }
-        for received in rx {
-            println!("{}", received);
+        };
+        drop(tx);
+        while let Result::Ok(msg) = rx.recv() {
+            self.handle_msg(msg)
         }
 
-        println!("No more visitors!");
-
-        println!("I guess we're closing the doors.");
+        println!("No more visitors.  Closing the doors!");
     }
 
     fn open_computers(&self) -> bool {
@@ -87,7 +87,9 @@ impl Cafe {
         thread::spawn(move || {
             println!("{}", v.visit_start());
             v.visit();
+            // If there's some failure here, panic!  It reslly shouln't happen.
             sender.send(v.visit_summary()).unwrap();
+            println!("Summary sent, are we done?");
         });
     }
 

@@ -12,7 +12,7 @@ fn main() {
     let cafe = Cafe::new(10);
 
     // create a vector of visitors
-    let visitors = Visitor::generate_visitors(20);
+    let visitors = Visitor::generate_visitors(4);
 
     cafe.open_doors(visitors);
 }
