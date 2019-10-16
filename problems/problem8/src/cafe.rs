@@ -31,11 +31,17 @@ impl Cafe {
         cafe
     }
 
-    /// This function should create our message channel, decide when there
-    /// is a visitor and a free computer, then make use of
-    /// `self.allocate_computer` (check its type signature for hints).
-    /// It will also need to use `self.handle_msg` in two places (check its
-    /// comments for another hint).
+    /// Open (and close) the doors, letting "in" a set of visitors.  Let the
+    /// visitors use a computer till they're done, then let the next visitor
+    /// do the same till all visitors have finished.  Then close the doors.
+    /// * Create message channel
+    /// * If there is a free computer allocate it to the next visitor
+    /// * Wait for any computers to become free and summarize that visit.
+    /// * Continue until all visitors have finished.
+    /// * Close the doors.
+    /// 
+    /// Note: Could extend to add and remove computers over time and have 
+    /// random visitors come in too.  Use a command line interface.
     pub fn open_doors(mut self, mut visitors: Vec<Visitor>) {
         use std::time::Duration;
 
@@ -70,11 +76,12 @@ impl Cafe {
         self.available_computers > 0
     }
 
-    /// Here we need to go through all the steps of announcing a visitor, giving
-    /// them a computer, letting them visit for however long they want, and then
-    /// sending a summary of their visit to our channel to indicate when they're
-    /// all done. Check `visitor.rs` to see what methods you have available to
-    /// you.
+    /// Go through these steps:
+    /// * Announce a visitor
+    /// * Allocate a computer (subtract 1)
+    /// * Let them visit for however long they want, and then
+    /// * Sending a summary of their visit to our channel to indicate when they're
+    /// *   all done. 
     fn allocate_computer(&mut self, v: Visitor, sender: mpsc::Sender<String>) {
         self.available_computers = self.available_computers - 1;
         thread::spawn(move || {
@@ -84,10 +91,8 @@ impl Cafe {
         });
     }
 
-    /// We have to be prepared to receive messages at different times (while
-    /// some visitors are still waiting, and after all computers are allocated
-    /// but might still be in use). This helper function will print the summary
-    /// and make a computer available again.
+    /// Print the string message (assuming it's a thread completion message of 
+    /// the visit) and make a computer available again (Add 1).
     fn handle_msg(&mut self, msg: String) {
         println!("{}", msg);
         self.available_computers = self.available_computers + 1;
