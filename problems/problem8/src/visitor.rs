@@ -1,22 +1,26 @@
 use std::thread;
-use std::vec::Vec;
 use std::time::Duration;
-
+use std::vec::Vec;
 
 /// A visitor in our internet cafe. We assign them an id and some amount of time
 /// to visit.
 #[derive(Debug)]
 pub struct Visitor {
     id: u32,
-    minutes_per_visit: u32
+    minutes_per_visit: u32,
 }
 
-
 impl Visitor {
-
     /// Creates a new visitor
     pub fn new(id: u32, minutes_per_visit: u32) -> Self {
-        Visitor { id: id, minutes_per_visit: minutes_per_visit }
+        Visitor {
+            id: id,
+            minutes_per_visit: minutes_per_visit,
+        }
+    }
+
+    pub fn name(&self) -> String {
+        self.id.to_string()
     }
 
     /// A message announcing the start of this visit
@@ -26,9 +30,9 @@ impl Visitor {
 
     /// A summary of the visit
     pub fn visit_summary(&self) -> String {
-        format!("Visitor {} spent {} minutes online.",
-                &self.id,
-                &self.minutes_per_visit,
+        format!(
+            "Visitor {} spent {} minutes online.",
+            &self.id, &self.minutes_per_visit,
         )
     }
 
@@ -40,10 +44,11 @@ impl Visitor {
         thread::sleep(Duration::from_secs(wait_time));
     }
 
-
     /// This is a helper method to generate some number of visitors
     pub fn generate_visitors(num_visitors: u32) -> Vec<Visitor> {
         use rand::prelude::*;
+
+        println!("Creating Visitors!");
 
         let mut rng = rand::thread_rng();
 
@@ -53,7 +58,10 @@ impl Visitor {
             let minutes_per_visit: u32 = rng.gen_range(10, 120);
             let visitor = Self::new(id, minutes_per_visit);
             visitors.push(visitor);
+            print!("{} ", id);
         }
+
+        println!("\nVisitors are ready!");
 
         // Putting the visitors in reverse order makes it nicer to use `.pop()`
         // elsewhere, but your cafe can use any strategy it wants for obtaining
