@@ -87,9 +87,9 @@ impl Cafe {
         thread::spawn(move || {
             println!("{}", v.visit_start());
             v.visit();
-            // If there's some failure here, panic!  It reslly shouln't happen.
+            // If there's some failure here, panic!  It won't happen since our
+            // receiver isn't going anywhere in this situation.
             sender.send(v.visit_summary()).unwrap();
-            println!("Summary sent, are we done?");
         });
     }
 
